@@ -127,19 +127,20 @@ void replace_str(char* str1, char* str2)
 /* Проверяет строку, разбивает её на массивы (две части мантиссы, порядок)*/
 int get_correct_form(char* arr, char* cm1, char* cn1, char* ck1, int* sign_m, int* sign_k)
 {
-
 	char* cm = cm1, *cn = cn1, *ck = ck1;
 	cm = strtok(arr, ".");
 	*sign_m = is_sign_str(cm);
 	cn = strtok(NULL, "E e");
 	ck = strtok(NULL, "");
-	*sign_k = is_sign_str(ck);
 
-	if (ck == NULL)
+	if (cm == NULL || cn == NULL ||ck == NULL)
 	{
 		printf("Неправильная форма!\n");
 		return INCORRECT_INPUT;
 	}
+
+	*sign_k = is_sign_str(ck);
+
 	if (is_numeric_string(cm) != TRUE || is_numeric_string(cn) != TRUE || is_numeric_string(ck) != TRUE)
 	{
 		printf("Введено не число!\n");
@@ -174,6 +175,7 @@ int get_digit(char* char_digit, int* digit, int* digit_sign)
 	return count;
 }
 
+/* Переводит массив символов в число */
 int split_int_arr(int* arr, int count)
 {
 	int digit = arr[0];
@@ -186,6 +188,7 @@ int split_int_arr(int* arr, int count)
 	return sum;
 }
 
+/* Переводит массив чисел в обратном порядке следования цифр */
 void reverse(int* arr, int count)
 {
   int i = 0, tmp;
@@ -199,13 +202,13 @@ void reverse(int* arr, int count)
   }
 }
 
-void result(int* mantissa, int count_mantissa, int* digit, int count, int k)
+/* Подсчитывает и выводит результат */
+void result(int* mantissa, int count_mantissa, int* digit, int count, int k, int sign_m)
 {
   int result[N] = {0};
   int current[N] = {0};
   reverse(mantissa, count_mantissa);
   reverse(digit, count);
-  print_arr(mantissa, count_mantissa);
   int i = 0, j = 0, tmp = 0, c = 0;
 
   int a, b, n;
@@ -215,13 +218,10 @@ void result(int* mantissa, int count_mantissa, int* digit, int count, int k)
     for (int i = 0; i < 99; i++)
       current[i] = 0;
     b = digit[i];
-    printf("b = %d\n", b);
     while (j < count_mantissa)
     {
       a = mantissa[j];
       n = (a*b);
-      printf("a = %d\n", a);
-      printf("n = %d\n\n", n);
       current[c] += n%10;
       tmp = n/10;
       current[c+1] += tmp;
@@ -242,14 +242,16 @@ void result(int* mantissa, int count_mantissa, int* digit, int count, int k)
   reverse(result, c);
   if (c > 30)
     k += c-30;
+	if (sign_m == -1)
+		printf("-");
   printf("0.");
   print_arr(result, c);
-  printf("E%d", k);
+  printf("e%d\n", k);
 }
 
 int main(void)
 {
-	char arr[N];
+	char arr[N] = {0};
 	char cm[N] = {0}, cn[N] = {0}, ck[N] = {0};
 	int m[N] = {0}, n[N] = {0}, k = 0;
 
@@ -282,7 +284,7 @@ int main(void)
 	k = split_int(ck);
 	k *= sign_k;
 	k += count_m;
-	if (-99999 >= k >= 99999)
+	if (-99999 > k || k > 99999)
 	{
 		printf("Переполнение порядка!\n");
 		return ORDER_OVERFLOW;
@@ -296,9 +298,9 @@ int main(void)
 		return DIGIT_OVERFLOW;
 	}
 
-	snprintf(c_mantissa, sizeof(c_mantissa), "%s%s", cm, cn);
-	count_mantissa = split_arr(c_mantissa, mantissa);
-	result(mantissa, count_mantissa, new_digit, count, k);
+	// snprintf(c_mantissa, sizeof(c_mantissa), "%s%s", cm, cn);
+	// count_mantissa = split_arr(c_mantissa, mantissa);
+	// result(mantissa, count_mantissa, new_digit, count, k, sign_m);
 
 	return 0;
 }
