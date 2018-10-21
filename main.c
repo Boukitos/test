@@ -203,7 +203,7 @@ void reverse(int* arr, int count)
 }
 
 /* Подсчитывает и выводит результат */
-void result(int* mantissa, int count_mantissa, int* digit, int count, int k, int sign_m)
+void result(int* mantissa, int count_mantissa, int* digit, int count, int k, int sign_m, int count_n)
 {
   int result[N] = {0};
   int current[N] = {0};
@@ -242,6 +242,7 @@ void result(int* mantissa, int count_mantissa, int* digit, int count, int k, int
   reverse(result, c);
   if (c > 30)
     k += c-30;
+	k += c-count_n;
 	if (sign_m == -1)
 		printf("-");
   printf("0.");
@@ -298,9 +299,9 @@ int main(void)
 		return DIGIT_OVERFLOW;
 	}
 
-	// snprintf(c_mantissa, sizeof(c_mantissa), "%s%s", cm, cn);
-	// count_mantissa = split_arr(c_mantissa, mantissa);
-	// result(mantissa, count_mantissa, new_digit, count, k, sign_m);
+	snprintf(c_mantissa, sizeof(c_mantissa), "%s%s", cm, cn);
+	count_mantissa = split_arr(c_mantissa, mantissa);
+	result(mantissa, count_mantissa, new_digit, count, k, sign_m, count_n);
 
 	return 0;
 }
