@@ -30,10 +30,8 @@ int get_count(char* arr)
 /* Выводит в консоль целочисленный массив */
 void print_arr(int* arr, int count)
 {
-	printf("Int array: ");
 	for (int i = 0; i<count; i++)
-		printf("%d ", arr[i]);
-	printf("\n");
+		printf("%d", arr[i]);
 }
 
 /* Считывает массив символов при вводе, возвращает кол-во символов */
@@ -188,6 +186,67 @@ int split_int_arr(int* arr, int count)
 	return sum;
 }
 
+void reverse(int* arr, int count)
+{
+  int i = 0, tmp;
+  count -= 1;
+  while (i != count/2)
+  {
+    tmp = arr[i];
+    arr[i] = arr[count-i];
+    arr[count-i] = tmp;
+    i++;
+  }
+}
+
+void result(int* mantissa, int count_mantissa, int* digit, int count, int k)
+{
+  int result[N] = {0};
+  int current[N] = {0};
+  reverse(mantissa, count_mantissa);
+  reverse(digit, count);
+  print_arr(mantissa, count_mantissa);
+  int i = 0, j = 0, tmp = 0, c = 0;
+
+  int a, b, n;
+  while (i < count)
+  {
+    j = 0, c = i;
+    for (int i = 0; i < 99; i++)
+      current[i] = 0;
+    b = digit[i];
+    printf("b = %d\n", b);
+    while (j < count_mantissa)
+    {
+      a = mantissa[j];
+      n = (a*b);
+      printf("a = %d\n", a);
+      printf("n = %d\n\n", n);
+      current[c] += n%10;
+      tmp = n/10;
+      current[c+1] += tmp;
+      j++;
+      c++;
+    }
+    i++;
+    for (int q = 0; q < c; q++)
+    {
+      result[q] += current[q];
+      if (result[q] > 9)
+      {
+        result[q+1] += result[q]/10;
+        result[q] = result[q]%10;
+      }
+    }
+  }
+  reverse(result, c);
+  if (c > 30)
+    k += c-30;
+  printf("0.");
+  print_arr(result, c);
+  printf("E%d", k);
+}
+
 int main(void)
 {
 	char arr[N];
@@ -239,11 +298,7 @@ int main(void)
 
 	snprintf(c_mantissa, sizeof(c_mantissa), "%s%s", cm, cn);
 	count_mantissa = split_arr(c_mantissa, mantissa);
-	print_arr(mantissa, count_mantissa);
-	printf("Sign of mantissa: %d\n", sign_m);
-	print_arr(new_digit, count);
-	printf("Sign of digit: %d\n", sign_k);
-	printf("k = %d\n", k);
+	result(mantissa, count_mantissa, new_digit, count, k);
 
 	return 0;
 }
